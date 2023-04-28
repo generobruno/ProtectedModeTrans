@@ -11,7 +11,8 @@ message:
 
 /* 
 Compilar y correr:
-as -g -o protected_mode.o protected_mode.S
-ld --oformat binary -o protected_mode.img -T link.ld protected_mode.o
-qemu-system-x86_64 -hda protected_mode.img
+gcc -m32 -c -ggdb3 -o 'protected_mode_macros.o' 'protected_mode_macros.S'
+ld -melf_i386  -nostdlib -o 'protected_mode_macros.elf' -T 'linker.ld' 'protected_mode_macros.o'
+objcopy -O binary 'protected_mode_macros.elf' 'protected_mode_macros.img'
+qemu-system-x86_64 --drive file=protected_mode_macros.img,format=raw,index=0,media=disk
 */
