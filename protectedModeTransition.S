@@ -52,8 +52,8 @@ message:
     POP_DAX
 .endm
 
-.globl s
-s:
+.globl message
+message:
     .asciz "Hello world"
 
 /************************************************************************************************************/
@@ -80,7 +80,7 @@ s:
         pop %ax
 
         /* 
-                Enter protected mode. Use the simplest GDT possible. 
+                PROTECTED_MODE: Enter protected mode. Use the simplest GDT possible. 
         */
     
         /* Must come before they are used. */
@@ -171,10 +171,14 @@ s:
         * Uses and updates vga_current_line to decide the current line.
         * Loops around the to the top.
         */
+
+        /*
+                        VGA_PRINT_STRING
+        */
     
         /*LOCAL loop, end*/
         PUSH_EADX
-        mov s, %ecx # TODO antes era \s
+        mov message, %ecx 
         mov vga_current_line, %eax
         mov $0, %edx
         /* Number of horizontal lines. */
@@ -199,11 +203,6 @@ s:
     end:
         incl vga_current_line
         POP_EDAX
-
-        jmp .
-
-    message:
-        .asciz "Hello world"
 .end
 
     /* 
@@ -231,6 +230,6 @@ s:
     mov %dl, initial_dl
     jmp after_locals
     initial_dl: .byte 0
+    jmp .
 
-    /* #TODO Poner esto dentro de after_locals, al final? */
 
