@@ -52,33 +52,11 @@ message:
     POP_DAX
 .endm
 
-/************************************************************************************************************/
+.globl s
+s:
+    .asciz "Hello world"
 
-    /* 
-                    BEGIN 
-    */
-    /* Al empezar en modo real, el código es en 16 bits */
-    .code16
-    cli
-    /* Seteamos el CS a 0. */
-    ljmp $0, $1f
-    1:
-    xor %ax, %ax
-    /* Seteamos el DS a 0. */
-    mov %ax, %ds
-    /* Limpiamos el resto de segmentos */
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-    mov %ax, %bp
-    /* Deshabilitamos las interrupciones */
-    mov %ax, %ss
-    /* We should set SP because BIOS calls may depend on that. TODO confirm. */
-    mov %bp, %sp
-    /* Store the initial dl to load stage 2 later on. */
-    mov %dl, initial_dl
-    jmp after_locals
-    initial_dl: .byte 0
+/************************************************************************************************************/
 
 .after_locals:
         /*
@@ -222,9 +200,37 @@ message:
         incl vga_current_line
         POP_EDAX
 
-    jmp .
+        jmp .
 
     message:
         .asciz "Hello world"
 .end
+
+    /* 
+                    BEGIN 
+    */
+    /* Al empezar en modo real, el código es en 16 bits */
+    .code16
+    cli
+    /* Seteamos el CS a 0. */
+    ljmp $0, $1f
+    1:
+    xor %ax, %ax
+    /* Seteamos el DS a 0. */
+    mov %ax, %ds
+    /* Limpiamos el resto de segmentos */
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %ax, %bp
+    /* Deshabilitamos las interrupciones */
+    mov %ax, %ss
+    /* We should set SP because BIOS calls may depend on that. TODO confirm. */
+    mov %bp, %sp
+    /* Store the initial dl to load stage 2 later on. */
+    mov %dl, initial_dl
+    jmp after_locals
+    initial_dl: .byte 0
+
+    /* #TODO Poner esto dentro de after_locals, al final? */
 
