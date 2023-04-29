@@ -58,17 +58,6 @@ message:
 /************************************************************************************************************/
 
 /*
-BEGIN
-    CLEAR
-    PROTECTED_MODE
-    VGA_PRINT_STRING $message
-    jmp .
-message:
-    .asciz "hello world"
-*/
-
-
-/*
         BEGIN
 */
     .code16
@@ -83,9 +72,6 @@ message:
     mov %ax, %es
     mov %ax, %fs
     mov %ax, %gs
-    /* TODO What to move into BP and SP?
-     * http://stackoverflow.com/questions/10598802/which-value-should-be-used-for-sp-for-booting-process
-     */
     mov %ax, %bp
     /* Automatically disables interrupts until the end of the next instruction. */
     mov %ax, %ss
@@ -131,8 +117,7 @@ message:
         ljmp $CODE_SEG, $protected_mode
     /* Our GDT contains:
     *
-    * * a null entry to fill the unusable entry 0:
-    * http://stackoverflow.com/questions/33198282/why-have-the-first-segment-descriptor-of-the-global-descriptor-table-contain-onl
+    * * a null entry to fill the unusable entry 0:  
     * * a code and data. Both are necessary, because:
     * +
     * --
@@ -179,7 +164,6 @@ message:
     protected_mode:
         /* Setup the other segments.
         * Those movs are mandatory because they update the descriptor cache:
-        * http://wiki.osdev.org/Descriptor_Cache
         */
         mov $DATA_SEG, %ax
         mov %ax, %ds
@@ -187,9 +171,6 @@ message:
         mov %ax, %fs
         mov %ax, %gs
         mov %ax, %ss
-        /* TODO detect the last memory address available properly.
-        * It depends on how much RAM we have.
-        */
         mov $0X7000, %ebp
         mov %ebp, %esp
 
@@ -224,7 +205,6 @@ message:
         incl vga_current_line
         POP_EDAX
 
-        /* DONE */
         jmp .
     message:
         .asciz "Hello world"
